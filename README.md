@@ -5,7 +5,7 @@
 ## 工作流
 
 ```
-C 源码 → 解析(AST/IR) → 静态分析 → LLM 翻译 → Java 代码生成 → Spring 项目
+C 源码 → 解析(AST/IR) → neo4j知识图谱 → 静态分析 → LLM 翻译 → Java 代码生成 → Spring 项目
 ```
 
 各目录用途详见 [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)。
