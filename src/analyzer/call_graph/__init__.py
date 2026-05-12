@@ -1,17 +1,22 @@
 """
-调用图分析模块。
+调用图分析模块 - Call Graph Analysis
 
-负责对 C 语言中间表示（IR）进行函数调用关系分析，构建调用图（Call Graph）。
+构建 C 语言函数的调用关系图，识别：
+- 函数调用链（call chains）
+- 递归调用（direct/indirect recursion）
+- 间接调用（通过函数指针）
+- 调用深度与复杂度统计
 
-主要功能：
-- 构建函数调用关系图，记录谁调用了谁
-- 识别递归函数和间接调用（函数指针）
-- 分析调用深度和调用链
-- 为后续 LLM 翻译提供调用上下文信息
-
-调用图是静态分析的核心数据结构之一，用于：
-1. 确定函数迁移的先后顺序（被调用者先迁移）
-2. 识别核心业务函数（被频繁调用的函数）
-3. 发现潜在的递归逻辑需要特殊处理
-4. 辅助理解 C 代码的业务流程
+输出结果供 LLM 翻译阶段理解函数间的调用关系，
+确保生成的 Java 代码保持正确的调用依赖。
 """
+
+from .call_graph import CallGraph, CallNode, CallEdge
+from .analyzer import CallGraphAnalyzer
+
+__all__ = [
+    "CallGraph",
+    "CallNode",
+    "CallEdge",
+    "CallGraphAnalyzer",
+]

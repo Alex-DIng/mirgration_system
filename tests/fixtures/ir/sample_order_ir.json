@@ -1,0 +1,88 @@
+{
+  "name": "sample_order_ir",
+  "description": "证券订单 IR 样例 - 用于测试",
+  "functions": [
+    {
+      "name": "create_order",
+      "file_path": "order.c",
+      "line_number": 15,
+      "return_type": "SecuritiesOrder*",
+      "parameters": [
+        {"name": "order_id", "type": "int"},
+        {"name": "type", "type": "OrderType"},
+        {"name": "stock_code", "type": "const char*"},
+        {"name": "quantity", "type": "int"},
+        {"name": "price", "type": "double"}
+      ],
+      "calls": [
+        {"name": "malloc", "line": 18, "type": "direct"},
+        {"name": "get_current_timestamp", "line": 25, "type": "direct"}
+      ],
+      "local_variables": [
+        {"name": "order", "type": "SecuritiesOrder*"}
+      ]
+    },
+    {
+      "name": "validate_order",
+      "file_path": "order.c",
+      "line_number": 30,
+      "return_type": "int",
+      "parameters": [
+        {"name": "order", "type": "SecuritiesOrder*"}
+      ],
+      "calls": [],
+      "local_variables": []
+    },
+    {
+      "name": "submit_order",
+      "file_path": "order.c",
+      "line_number": 40,
+      "return_type": "int",
+      "parameters": [
+        {"name": "order", "type": "SecuritiesOrder*"}
+      ],
+      "calls": [
+        {"name": "validate_order", "line": 42, "type": "direct"},
+        {"name": "send_to_exchange", "line": 46, "type": "direct"}
+      ],
+      "local_variables": []
+    }
+  ],
+  "structs": [
+    {
+      "name": "SecuritiesOrder",
+      "file_path": "order.h",
+      "line_number": 10,
+      "fields": [
+        {"name": "order_id", "type": "int"},
+        {"name": "type", "type": "OrderType"},
+        {"name": "stock_code", "type": "char[16]"},
+        {"name": "quantity", "type": "int"},
+        {"name": "price", "type": "double"},
+        {"name": "status", "type": "OrderStatus"}
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "OrderType",
+      "file_path": "order.h",
+      "line_number": 5,
+      "values": [
+        {"name": "ORDER_TYPE_BUY", "value": 1},
+        {"name": "ORDER_TYPE_SELL", "value": 2}
+      ]
+    },
+    {
+      "name": "OrderStatus",
+      "file_path": "order.h",
+      "line_number": 8,
+      "values": [
+        {"name": "ORDER_STATUS_PENDING", "value": 0},
+        {"name": "ORDER_STATUS_SUBMITTED", "value": 1},
+        {"name": "ORDER_STATUS_FILLED", "value": 2},
+        {"name": "ORDER_STATUS_CANCELLED", "value": 3}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "mock_llm_completion",
+  "description": "Mock LLM 响应样例 - 用于单元测试",
+  "responses": {
+    "translate_function": {
+      "id": "cmpl-test-12345",
+      "object": "text_completion",
+      "created": 1234567890,
+      "model": "private-llm-model",
+      "choices": [
+        {
+          "text": "```java\n@Service\npublic class OrderService {\n    \n    @Autowired\n    private OrderRepository orderRepository;\n    \n    @Transactional\n    public SecuritiesOrder createOrder(Integer orderId, OrderType type, \n                                        String stockCode, Integer quantity, \n                                        Double price) {\n        SecuritiesOrder order = new SecuritiesOrder();\n        order.setOrderId(orderId);\n        order.setType(type);\n        order.setStockCode(stockCode);\n        order.setQuantity(quantity);\n        order.setPrice(price);\n        order.setStatus(OrderStatus.PENDING);\n        return orderRepository.save(order);\n    }\n}\n```",
+          "finish_reason": "stop",
+          "index": 0
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 150,
+        "completion_tokens": 200,
+        "total_tokens": 350
+      }
+    },
+    "translate_struct": {
+      "id": "cmpl-test-67890",
+      "object": "text_completion",
+      "created": 1234567891,
+      "model": "private-llm-model",
+      "choices": [
+        {
+          "text": "```java\n@Entity\n@Table(name = \"securities_order\")\npublic class SecuritiesOrder {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Integer orderId;\n    \n    @Enumerated(EnumType.ORDINAL)\n    private OrderType type;\n    \n    private String stockCode;\n    private Integer quantity;\n    private Double price;\n    private OrderStatus status;\n    \n    // Getters and Setters\n}\n```",
+          "finish_reason": "stop",
+          "index": 0
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 100,
+        "completion_tokens": 150,
+        "total_tokens": 250
+      }
+    },
+    "error_response": {
+      "error": {
+        "message": "Invalid API key",
+        "type": "authentication_error",
+        "code": "invalid_api_key"
+      }
+    }
+  }
+}
