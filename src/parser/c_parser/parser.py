@@ -36,19 +36,20 @@ class CParser:
         self._parser = None
 
     def _ensure_tree_sitter(self) -> None:
-        """确保 tree-sitter 已初始化"""
+        """Ensure tree-sitter is initialized"""
         if not self._tree_sitter_initialized:
             try:
-                from tree_sitter import Language, Parser
+                from tree_sitter import Parser
+                from tree_sitter_c import c_language
 
-                # 加载 C 语言语法
-                # 需要先运行：git clone https://github.com/tree-sitter/tree-sitter-c
-                self._language = Language("tree-sitter-c.so", "c")
-                self._parser = Parser()
-                self._parser.set_language(self._language)
+                # New tree-sitter API (tree-sitter-c>=0.21.0)
+                self._language = c_language()
+                self._parser = Parser(self._language)
                 self._tree_sitter_initialized = True
             except ImportError:
                 logger.warning("tree-sitter not available, using fallback parser")
+            except Exception as e:
+                logger.warning(f"tree-sitter init failed: {e}, using fallback parser")
 
     def parse_file(self, file_path: str) -> Dict[str, Any]:
         """

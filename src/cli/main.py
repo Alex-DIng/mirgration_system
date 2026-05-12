@@ -1,7 +1,7 @@
 """
-命令行主程序 - CLI Main Program
+CLI Main Program
 
-实现迁移系统的命令行接口。
+Implements the command-line interface for the migration system.
 """
 
 import argparse
@@ -15,7 +15,7 @@ from src.core.pipeline import MigrationPipeline
 
 
 def setup_logging(level: str = "INFO", log_file: Optional[str] = None) -> None:
-    """设置日志"""
+    """Setup logging"""
     handlers = [logging.StreamHandler(sys.stdout)]
     if log_file:
         handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
@@ -28,13 +28,13 @@ def setup_logging(level: str = "INFO", log_file: Optional[str] = None) -> None:
 
 
 def cmd_migrate(args: argparse.Namespace) -> int:
-    """执行迁移命令"""
+    """Execute migration command"""
     setup_logging(args.log_level)
     logger = logging.getLogger(__name__)
 
     logger.info(f"Starting migration from {args.source} to {args.output}")
 
-    # 构建配置
+    # Build config
     llm_config = LLMConfig(
         endpoint=args.llm_endpoint or "http://localhost:8080/v1",
         api_key=args.llm_key or "default-key",
@@ -49,7 +49,7 @@ def cmd_migrate(args: argparse.Namespace) -> int:
     )
 
     try:
-        # 执行迁移
+        # Execute migration
         pipeline = MigrationPipeline(config)
         report = pipeline.run()
 
@@ -62,7 +62,7 @@ def cmd_migrate(args: argparse.Namespace) -> int:
 
 
 def cmd_parse(args: argparse.Namespace) -> int:
-    """执行解析命令"""
+    """Execute parse command"""
     setup_logging(args.log_level)
     logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ def cmd_parse(args: argparse.Namespace) -> int:
     logger.info(f"Found {len(result.get('structs', []))} structs")
     logger.info(f"Found {len(result.get('enums', []))} enums")
 
-    # 导出 IR
+    # Export IR
     if args.output:
         import json
         output_path = Path(args.output)
@@ -98,18 +98,18 @@ def cmd_parse(args: argparse.Namespace) -> int:
 
 
 def cmd_analyze(args: argparse.Namespace) -> int:
-    """执行分析命令"""
+    """Execute analyze command"""
     setup_logging(args.log_level)
     logger = logging.getLogger(__name__)
 
-    # 先解析
+    # Parse first
     from src.parser.c_parser import CParser
     from src.analyzer.call_graph import CallGraphAnalyzer
 
     parser = CParser()
     result = parser.parse_directory(args.source)
 
-    # 构建调用图
+    # Build call graph
     analyzer = CallGraphAnalyzer()
     graph = analyzer.build_from_ir(result.get("functions", []))
     report = analyzer.analyze()
@@ -127,12 +127,12 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def cmd_config(args: argparse.Namespace) -> int:
-    """配置管理命令"""
+    """Config management command"""
     config_dir = Path.home() / ".migration_system"
     config_dir.mkdir(parents=True, exist_ok=True)
 
     if args.action == "init":
-        # 创建示例配置
+        # Create sample config
         config_file = config_dir / "config.yaml"
         if config_file.exists():
             print(f"Config already exists: {config_file}")
@@ -171,45 +171,45 @@ logging:
 
 
 def create_parser() -> argparse.ArgumentParser:
-    """创建命令行参数解析器"""
+    """Create CLI parser"""
     parser = argparse.ArgumentParser(
         prog="migration-system",
-        description="C 到 Java 证券交易系统迁移工具",
+        description="C to Java Trading System Migration Tool",
     )
 
-    subparsers = parser.add_subparsers(dest="command", help="子命令")
+    subparsers = parser.add_subparsers(dest="command", help="Subcommands")
 
-    # migrate 命令
-    migrate_parser = subparsers.add_parser("migrate", help="执行完整迁移")
-    migrate_parser.add_argument("--source", "-s", required=True, help="C 源码目录")
-    migrate_parser.add_argument("--output", "-o", required=True, help="Java 输出目录")
-    migrate_parser.add_argument("--llm-endpoint", help="LLM API 端点")
-    migrate_parser.add_argument("--llm-key", help="LLM API 密钥")
-    migrate_parser.add_argument("--llm-model", help="LLM 模型名称")
-    migrate_parser.add_argument("--package-prefix", default="com.migration", help="Java 包名前缀")
-    migrate_parser.add_argument("--log-level", default="INFO", help="日志级别")
+    # migrate command
+    migrate_parser = subparsers.add_parser("migrate", help="Execute full migration")
+    migrate_parser.add_argument("--source", "-s", required=True, help="C source directory")
+    migrate_parser.add_argument("--output", "-o", required=True, help="Java output directory")
+    migrate_parser.add_argument("--llm-endpoint", help="LLM API endpoint")
+    migrate_parser.add_argument("--llm-key", help="LLM API key")
+    migrate_parser.add_argument("--llm-model", help="LLM model name")
+    migrate_parser.add_argument("--package-prefix", default="com.migration", help="Java package prefix")
+    migrate_parser.add_argument("--log-level", default="INFO", help="Log level")
     migrate_parser.set_defaults(func=cmd_migrate)
 
-    # parse 命令
-    parse_parser = subparsers.add_parser("parse", help="解析 C 源码")
-    parse_parser.add_argument("--source", "-s", required=True, help="C 源码文件/目录")
-    parse_parser.add_argument("--output", "-o", help="IR 输出文件")
-    parse_parser.add_argument("--log-level", default="INFO", help="日志级别")
+    # parse command
+    parse_parser = subparsers.add_parser("parse", help="Parse C source files")
+    parse_parser.add_argument("--source", "-s", required=True, help="C source file/directory")
+    parse_parser.add_argument("--output", "-o", help="IR output file")
+    parse_parser.add_argument("--log-level", default="INFO", help="Log level")
     parse_parser.set_defaults(func=cmd_parse)
 
-    # analyze 命令
-    analyze_parser = subparsers.add_parser("analyze", help="分析调用图")
-    analyze_parser.add_argument("--source", "-s", required=True, help="C 源码目录")
-    analyze_parser.add_argument("--output", "-o", help="分析报告输出")
-    analyze_parser.add_argument("--log-level", default="INFO", help="日志级别")
+    # analyze command
+    analyze_parser = subparsers.add_parser("analyze", help="Analyze call graph")
+    analyze_parser.add_argument("--source", "-s", required=True, help="C source directory")
+    analyze_parser.add_argument("--output", "-o", help="Analysis report output")
+    analyze_parser.add_argument("--log-level", default="INFO", help="Log level")
     analyze_parser.set_defaults(func=cmd_analyze)
 
-    # config 命令
-    config_parser = subparsers.add_parser("config", help="配置管理")
+    # config command
+    config_parser = subparsers.add_parser("config", help="Configuration management")
     config_parser.add_argument(
         "action",
         choices=["init", "show"],
-        help="配置操作",
+        help="Config action",
     )
     config_parser.set_defaults(func=cmd_config)
 
@@ -217,7 +217,7 @@ def create_parser() -> argparse.ArgumentParser:
 
 
 def main():
-    """主入口函数"""
+    """Main entry point"""
     parser = create_parser()
     args = parser.parse_args()
 
@@ -228,7 +228,7 @@ def main():
     return args.func(args)
 
 
-# 命令行入口
+# CLI entry point
 cli = main
 
 if __name__ == "__main__":

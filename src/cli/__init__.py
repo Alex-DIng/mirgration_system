@@ -1,14 +1,14 @@
 """
-命令行接口模块 - CLI Module
+CLI Module
 
-提供迁移系统的命令行入口，支持以下子命令：
-    - migrate: 执行完整迁移流程
-    - parse: 仅解析 C 源码
-    - analyze: 仅执行分析
-    - generate: 仅生成 Java 代码
-    - config: 管理配置文件
+Command-line interface for the migration system with subcommands:
+    - migrate: Execute full migration
+    - parse: Parse C source files only
+    - analyze: Analyze call graph only
+    - generate: Generate Java code only
+    - config: Manage configuration files
 
-使用示例:
+Usage:
     python -m src.cli migrate --source ./c_source --output ./java_output
 """
 
